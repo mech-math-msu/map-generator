@@ -22,4 +22,4 @@
 
 ## Хочу еще картинок!
 
-[Держи](https://mech-math-msu.github.io/map-generator)
+[Держи](https://mech-math-msu.github.io/map-generator/html)
