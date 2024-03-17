@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rough.js Points</title>
+    <!-- Include Rough.js library -->
+    <script src="https://unpkg.com/roughjs@latest/bundled/rough.js"></script>
+    <style>
+        canvas {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    <center><canvas id="points" width="800" height="600"></canvas></center>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Load JSON data
+            fetch('maps.json')
+                .then(response => response.json())
+                .then(data => draw(data))
+                .catch(error => console.error('Error loading JSON:', error));
+        });
+        
+
+        function draw(d) {
+            const data = d[Math.floor(Math.random() * 100)];//d["map" + Math.floor(Math.random() * 100)];
+            const canvas = document.getElementById('points');
+            const offset = 16;
+            canvas.width = data.width + 2 * offset;
+            canvas.height = data.height + 2 * offset;
+            const ctx = canvas.getContext('2d');
+            ctx.translate(offset, offset);
+
+            const roughCanvas = rough.canvas(canvas);
+
+            function choice(array) {
+                const randomIndex = Math.floor(Math.random() * array.length);
+                return array[randomIndex];
+            }
+
+            data.fields.forEach(field => {
+                colors = ['#f9a620', '#aab03c', '#e4b61a']
+                angles = [0, 30, 60, 90, 135, 180, 225, 270, 315]
+                roughCanvas.polygon(field, { stroke: 'none', fillWeight: 2.7, bowing: 1, roughness: 0.1, fillStyle: 'cross-hatch', hachureAngle: choice(angles), fill: choice(colors) });
+            });
+
+            data.roads.forEach(pair => {
+                const p1 = data.points[pair[0]];
+                const p2 = data.points[pair[1]];
+                const x1 = p1[0];
+                const y1 = p1[1];
+                const x2 = p2[0];
+                const y2 = p2[1];
+                roughCanvas.line(x1, y1, x2, y2, { bowing: 1, stroke: '#76520e', strokeWidth: 4 });
+            });
+
+            function sheep(x, y) {
+                deltas = [0, 5, 9, 7, 10, 12, 14];
+                const dx = choice(deltas);
+                const dy = choice(deltas);
+                roughCanvas.circle(x + dx, y + dy, 16, { bowing: 3, roughness: 1, fillStyle: 'solid', fill: 'white' });
+                head = choice([7, 8, 6, 5]);
+                roughCanvas.circle(x + dx + head, y + dy + 9 - head, 4, { bowing: 1, roughness: 0.1, fillStyle: 'solid', fill: 'black' });
+                // roughCanvas.circle(x + dx, y + dx - 1, 4, { bowing: 1, roughness: 0.1, fillStyle: 'solid', fill: 'black' });
+            }
+
+            data.sheeps.forEach(point => {
+                const x = point[0];
+                const y = point[1];
+                sheep(x, y);
+                // draw_sheep(x, y);
+                // draw_sheep(x, y);
+            });
+
+            const green_colors = ['#143601', '#1a4301', '#245501', '#538d22'];
+
+            function bush(x, y, size, color) {
+                roughCanvas.circle(x, y, size, { fillWeight: 2, bowing: 10, roughness: 2.8, fillStyle: 'dots', fill: color });
+            }
+
+            data.bushes.forEach(point => {
+                const x = point[0];
+                const y = point[1];
+                sizes = [16, 15, 17, 20, 14];
+                bush(x, y, choice(sizes), choice(green_colors));
+            });
+
+            data.trees.forEach(point => {
+                const x = point[0];
+                const y = point[1];
+                sizes = [40, 35, 30, 25];
+                bush(x, y, choice(sizes), choice(green_colors));
+            });
+        }
+    </script>
+</body>
+</html>

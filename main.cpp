@@ -1,7 +1,6 @@
 #include <random>
 #include <iostream>
 #include "jsonify.h"
-#include "db.h"
 
 struct MapOptions {
     int width;
@@ -43,69 +42,69 @@ struct MapOptions {
 };
 
 int main(int argc, char* argv[]) {
-    MapOptions opts_(argv, argc);
+    MapOptions opts(argv, argc);
 
     std::ofstream file;
-    file.open(opts_.fn);
+    file.open(opts.fn);
 
-    Map map(opts_.width, opts_.height, opts_.n_points, opts_.n_bushes, opts_.n_trees, opts_.n_sheeps);
+    Map map(opts.width, opts.height, opts.n_points, opts.n_bushes, opts.n_trees, opts.n_sheeps);
     json(map, file);
 
     file.close();
 
-    RoughObjectOptions opts;
+    // RoughObjectOptions opts;
 
-    DB db;
-    std::string fn = "db.db";
-    db.connect(fn);
+    // DB db;
+    // std::string fn = "db.db";
+    // db.connect(fn);
 
-    std::vector<uint16_t> pts;
+    // std::vector<uint16_t> pts;
 
-    for (size_t i = 0; i < map.roads.size(); ++i) {
-        pts.clear();
-        pts.push_back(map.points[map.roads[i].i].x);
-        pts.push_back(map.points[map.roads[i].i].y);
-        pts.push_back(map.points[map.roads[i].j].x);
-        pts.push_back(map.points[map.roads[i].j].y);
+    // for (size_t i = 0; i < map.roads.size(); ++i) {
+    //     pts.clear();
+    //     pts.push_back(map.points[map.roads[i].i].x);
+    //     pts.push_back(map.points[map.roads[i].i].y);
+    //     pts.push_back(map.points[map.roads[i].j].x);
+    //     pts.push_back(map.points[map.roads[i].j].y);
 
-        db._insert(RoughObjectType::LINE, opts, pts);
-    }
+    //     db._insert(RoughObjectType::LINE, opts, pts);
+    // }
 
-    for (size_t i = 0; i < map.fields.size(); ++i) {
-        pts.clear();
-        pts.push_back(map.fields[i].a.x);
-        pts.push_back(map.fields[i].a.y);
-        pts.push_back(map.fields[i].b.x);
-        pts.push_back(map.fields[i].b.y);
-        pts.push_back(map.fields[i].c.x);
-        pts.push_back(map.fields[i].c.y);
+    // for (size_t i = 0; i < map.fields.size(); ++i) {
+    //     pts.clear();
+    //     pts.push_back(map.fields[i].a.x);
+    //     pts.push_back(map.fields[i].a.y);
+    //     pts.push_back(map.fields[i].b.x);
+    //     pts.push_back(map.fields[i].b.y);
+    //     pts.push_back(map.fields[i].c.x);
+    //     pts.push_back(map.fields[i].c.y);
 
-        db._insert(RoughObjectType::POLYGON, opts, pts);
-    }
+    //     db._insert(RoughObjectType::POLYGON, opts, pts);
+    // }
 
-    for (size_t i = 0; i < map.trees.size(); ++i) {
-        pts.clear();
-        pts.push_back(map.trees[i].x);
-        pts.push_back(map.trees[i].y);
+    // for (size_t i = 0; i < map.trees.size(); ++i) {
+    //     pts.clear();
+    //     pts.push_back(map.trees[i].x);
+    //     pts.push_back(map.trees[i].y);
 
-        db._insert(RoughObjectType::CIRCLE, opts, pts);
-    }
+    //     db._insert(RoughObjectType::CIRCLE, opts, pts);
+    // }
 
-    for (size_t i = 0; i < map.bushes.size(); ++i) {
-        pts.clear();
-        pts.push_back(map.bushes[i].x);
-        pts.push_back(map.bushes[i].y);
+    // for (size_t i = 0; i < map.bushes.size(); ++i) {
+    //     pts.clear();
+    //     pts.push_back(map.bushes[i].x);
+    //     pts.push_back(map.bushes[i].y);
 
-        db._insert(RoughObjectType::CIRCLE, opts, pts);
-    }
+    //     db._insert(RoughObjectType::CIRCLE, opts, pts);
+    // }
 
-    for (size_t i = 0; i < map.sheeps.size(); ++i) {
-        pts.clear();
-        pts.push_back(map.sheeps[i].x);
-        pts.push_back(map.sheeps[i].y);
+    // for (size_t i = 0; i < map.sheeps.size(); ++i) {
+    //     pts.clear();
+    //     pts.push_back(map.sheeps[i].x);
+    //     pts.push_back(map.sheeps[i].y);
 
-        db._insert(RoughObjectType::CIRCLE, opts, pts);
-    }
+    //     db._insert(RoughObjectType::CIRCLE, opts, pts);
+    // }
 
     // std::mt19937 eng;
     // std::random_device r;
@@ -123,7 +122,7 @@ int main(int argc, char* argv[]) {
 
     // file.open("deaths.json");
 
-    // file << "{";
+    // file << "[";
     // int w, h, p, f, s, b;
     // for (int i = 0; i < N; ++i) {
     //     w = w_dist(eng);
@@ -132,14 +131,10 @@ int main(int argc, char* argv[]) {
     //     s = s_dist(eng);
     //     f = f_dist(eng);
     //     b = b_dist(eng);
-    //     file << "\"map" << i << "\":";
-    //     Map(w, h, p, b, f, s).json(file);
+    //     json(Map(w, h, p, b, f, s), file);
     //     file << ",\n";
     // }
-    // file << "\"map" << N << "\":";
-    // Map(w, h, p, b, f, s).json(file);
-    // file << "}";
+    // json(Map(w, h, p, b, f, s), file);
+    // file << "]";
 
 }
-
-// good maps: 44
